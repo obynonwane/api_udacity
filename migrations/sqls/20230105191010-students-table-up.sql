@@ -1,0 +1,1 @@
+CREATE TABLE students(name VARCHAR(255), level VARCHAR(255), id SERIAL PRIMARY KEY);

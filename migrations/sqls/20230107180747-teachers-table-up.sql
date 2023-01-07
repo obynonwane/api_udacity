@@ -1,0 +1,1 @@
+CREATE TABLE teachers(firstname VARCHAR(255), lastname VARCHAR(255), id SERIAL PRIMARY KEY);
