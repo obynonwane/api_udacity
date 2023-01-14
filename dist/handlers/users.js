@@ -38,36 +38,45 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.UserHandler = void 0;
 var user_1 = require("../models/user");
-var userMethod = new user_1.UserModel();
+var userModel = new user_1.UserModel();
 var UserHandler = /** @class */ (function () {
     function UserHandler() {
     }
     UserHandler.prototype.create = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, response;
+            var result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        data = req.body;
-                        return [4 /*yield*/, userMethod.create(data)];
+                    case 0: return [4 /*yield*/, userModel.create(req.body)];
                     case 1:
-                        response = _a.sent();
-                        return [2 /*return*/, res.json(response)];
+                        result = _a.sent();
+                        return [2 /*return*/, res.json(result)];
                 }
             });
         });
     };
-    UserHandler.prototype.signin = function (req, res) {
+    UserHandler.prototype.index = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, response;
+            var result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        data = req.body;
-                        return [4 /*yield*/, userMethod.signin(data)];
+                    case 0: return [4 /*yield*/, userModel.index()];
                     case 1:
-                        response = _a.sent();
-                        return [2 /*return*/, res.json(response)];
+                        result = _a.sent();
+                        return [2 /*return*/, res.json(result)];
+                }
+            });
+        });
+    };
+    UserHandler.prototype.signIn = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, userModel.signIn(req.body)];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, res.json(result)];
                 }
             });
         });

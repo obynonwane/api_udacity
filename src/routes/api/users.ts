@@ -1,12 +1,13 @@
-import * as express from "express";
+import express from "express";
 
-import { UserHandler } from "../../handlers/user";
+import { UserHandler } from "../../handlers/users";
 
-const data = new UserHandler();
+const userMothods = new UserHandler();
 
 const users = express.Router();
 
-users.post("/", data.create);
-users.get("/", data.signin);
+users.post("/", userMothods.create);
+users.get("/", userMothods.index);
+users.post("/signin", userMothods.signIn);
 
 export default users;

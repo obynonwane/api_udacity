@@ -1,17 +1,12 @@
 import client from "../database";
-import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-dotenv.config();
+import dotenv from "dotenv";
+
 export type User = {
   firstname: string;
   lastname: string;
-  email: string;
-  password: string;
-};
-
-export type SigninType = {
   email: string;
   password: string;
 };
@@ -20,45 +15,55 @@ export class UserModel {
     try {
       const { firstname, lastname, email, password } = data;
 
+      const conn = await client.connect();
+
       const hash = bcrypt.hashSync(password + process.env.SALT, 10);
 
-      //open a connection
-      const connectionObject = await client.connect();
-      const sqlStatement =
+      const sql =
         "INSERT INTO users (firstname, lastname, email, password) VALUES($1, $2, $3, $4) RETURNING *";
-      const result = await connectionObject.query(sqlStatement, [
-        firstname,
-        lastname,
-        email,
-        hash,
-      ]);
+      const result = await conn.query(sql, [firstname, lastname, email, hash]);
 
       const user = result.rows[0];
-      console.log(user);
 
-      connectionObject.release();
-
+      conn.release();
       return user;
     } catch (error) {}
   }
 
-  async signin(details: SigninType) {
+  async index() {
     try {
-      console.log(process.env.TOKEN_SECRET);
-      // return details;
+      //open a connection a connection
+      const connection = await client.connect();
+
+      //write a sql statement
+      const statement = "SELECT * FROM users";
+
+      //execute the sql statement
+      const result = await connection.query(statement);
+
+      //close connectio
+      connection.release();
+
+      return result.rows;
+    } catch (error) {}
+  }
+
+  async signIn(details) {
+    try {
       const { email, password } = details;
 
+      console.log("Welcome here");
       const sql = "SELECT * FROM users WHERE email=($1)";
-      // @ts-ignore
       const conn = await client.connect();
 
       const result = await conn.query(sql, [email]);
 
       conn.release();
+      console.log(result.rows[0]);
 
-      const secret: any = process.env.TOKEN_SECRET;
-      const token = jwt.sign({ user: result }, secret);
-      const user = result.rows[0].email;
+      const user = result.rows[0];
+      const token = jwt.sign({ user: user }, process.env.TOKEN_SECRET);
+
       return {
         user: user,
         token: token,
