@@ -22,16 +22,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 exports.__esModule = true;
 var express = __importStar(require("express"));
-var students_1 = __importDefault(require("./api/students"));
-var teachers_1 = __importDefault(require("./api/teachers"));
-var users_1 = __importDefault(require("./api/users"));
-var routes = express.Router();
-routes.use("/students", students_1["default"]);
-routes.use("/teachers", teachers_1["default"]);
-routes.use("/users", users_1["default"]);
-exports["default"] = routes;
+var uu = express.Router();
+var student_1 = require("../../models/student");
+var data = new student_1.Student();
+uu.get("/", data.index);
+uu.post("/", data.create);
+exports["default"] = uu;

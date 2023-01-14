@@ -35,47 +35,76 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
-exports.TeacherHandler = void 0;
-var teacher_1 = require("../models/teacher");
-var teacherMethods = new teacher_1.TeacherModel();
-var TeacherHandler = /** @class */ (function () {
-    function TeacherHandler() {
+exports.UserModel = void 0;
+var database_1 = __importDefault(require("../database"));
+var dotenv_1 = __importDefault(require("dotenv"));
+var bcrypt_1 = __importDefault(require("bcrypt"));
+dotenv_1["default"].config();
+var UserModel = /** @class */ (function () {
+    function UserModel() {
     }
-    TeacherHandler.prototype.index = function (req, res) {
+    UserModel.prototype.create = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var result;
+            var firstname, lastname, email, password, hash, connectionObject, sqlStatement, result, user, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log(req.headers);
-                        res.send(req.headers);
-                        return [4 /*yield*/, teacherMethods.index()];
+                        _a.trys.push([0, 3, , 4]);
+                        firstname = data.firstname, lastname = data.lastname, email = data.email, password = data.password;
+                        hash = bcrypt_1["default"].hashSync(password + process.env.SALT, 10);
+                        return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
+                        connectionObject = _a.sent();
+                        sqlStatement = "INSERT INTO users (firstname, lastname, email, password) VALUES($1, $2, $3, $4) RETURNING *";
+                        return [4 /*yield*/, connectionObject.query(sqlStatement, [
+                                firstname,
+                                lastname,
+                                email,
+                                hash,
+                            ])];
+                    case 2:
                         result = _a.sent();
-                        res.json(result);
-                        return [2 /*return*/];
+                        user = result.rows[0];
+                        console.log(user);
+                        connectionObject.release();
+                        return [2 /*return*/, user];
+                    case 3:
+                        error_1 = _a.sent();
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    TeacherHandler.prototype.create = function (req, res) {
+    UserModel.prototype.signin = function (details) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, result;
+            var email, password, sql, conn, result, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        data = req.body;
-                        return [4 /*yield*/, teacherMethods.create(data)];
+                        _a.trys.push([0, 3, , 4]);
+                        email = details.email, password = details.password;
+                        sql = "SELECT * FROM users WHERE email=($1)";
+                        return [4 /*yield*/, database_1["default"].connect()];
                     case 1:
+                        conn = _a.sent();
+                        return [4 /*yield*/, conn.query(sql, [email])];
+                    case 2:
                         result = _a.sent();
-                        res.status(201);
-                        res.json(result);
-                        return [2 /*return*/];
+                        conn.release();
+                        return [2 /*return*/, result.rows[0]];
+                    case 3:
+                        error_2 = _a.sent();
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    return TeacherHandler;
+    return UserModel;
 }());
-exports.TeacherHandler = TeacherHandler;
+exports.UserModel = UserModel;

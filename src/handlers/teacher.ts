@@ -4,6 +4,8 @@ import { TeacherModel } from "../models/teacher";
 const teacherMethods = new TeacherModel();
 export class TeacherHandler {
   async index(req: Request, res: Response) {
+    console.log(req.headers);
+    res.send(req.headers);
     const result = await teacherMethods.index();
     res.json(result);
   }
