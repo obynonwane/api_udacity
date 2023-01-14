@@ -1,11 +1,13 @@
 import express, { Request, Response } from "express";
 import { TeacherModel } from "../models/teacher";
 
+import jwt from "jsonwebtoken";
+
 const teacherMethods = new TeacherModel();
 export class TeacherHandler {
   async index(req: Request, res: Response) {
-    console.log(req.headers);
-    res.send(req.headers);
+    // console.log(req.headers);
+    // res.send(req.headers);
     const result = await teacherMethods.index();
     res.json(result);
   }
@@ -18,4 +20,17 @@ export class TeacherHandler {
     res.status(201);
     res.json(result);
   }
+
+  verifyAuthToken = (req: Request, res: Response, next) => {
+    try {
+      const authorizationHeader = req.headers.authorization;
+      const token = authorizationHeader.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+      next();
+    } catch (error) {
+      res.status(401);
+      res.send(error.message);
+    }
+  };
 }

@@ -43,6 +43,7 @@ exports.UserModel = void 0;
 var database_1 = __importDefault(require("../database"));
 var dotenv_1 = __importDefault(require("dotenv"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 dotenv_1["default"].config();
 var UserModel = /** @class */ (function () {
     function UserModel() {
@@ -82,11 +83,12 @@ var UserModel = /** @class */ (function () {
     };
     UserModel.prototype.signin = function (details) {
         return __awaiter(this, void 0, void 0, function () {
-            var email, password, sql, conn, result, error_2;
+            var email, password, sql, conn, result, secret, token, user, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
+                        console.log(process.env.TOKEN_SECRET);
                         email = details.email, password = details.password;
                         sql = "SELECT * FROM users WHERE email=($1)";
                         return [4 /*yield*/, database_1["default"].connect()];
@@ -96,7 +98,13 @@ var UserModel = /** @class */ (function () {
                     case 2:
                         result = _a.sent();
                         conn.release();
-                        return [2 /*return*/, result.rows[0]];
+                        secret = process.env.TOKEN_SECRET;
+                        token = jsonwebtoken_1["default"].sign({ user: result }, secret);
+                        user = result.rows[0].email;
+                        return [2 /*return*/, {
+                                user: user,
+                                token: token
+                            }];
                     case 3:
                         error_2 = _a.sent();
                         return [3 /*break*/, 4];

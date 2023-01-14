@@ -39,56 +39,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-exports.TeacherHandler = void 0;
-var teacher_1 = require("../models/teacher");
+exports.VerifyToken = void 0;
+var dotenv_1 = __importDefault(require("dotenv"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var teacherMethods = new teacher_1.TeacherModel();
-var TeacherHandler = /** @class */ (function () {
-    function TeacherHandler() {
-        this.verifyAuthToken = function (req, res, next) {
-            try {
-                var authorizationHeader = req.headers.authorization;
-                var token = authorizationHeader.split(" ")[1];
-                var decoded = jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
-                next();
-            }
-            catch (error) {
-                res.status(401);
-                res.send(error.message);
-            }
-        };
+dotenv_1["default"].config();
+var VerifyToken = /** @class */ (function () {
+    function VerifyToken() {
     }
-    TeacherHandler.prototype.index = function (req, res) {
+    VerifyToken.prototype.verifyJwt = function (req, res, next) {
         return __awaiter(this, void 0, void 0, function () {
-            var result;
+            var authorizationHeader, token, decoded;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, teacherMethods.index()];
-                    case 1:
-                        result = _a.sent();
-                        res.json(result);
-                        return [2 /*return*/];
+                authorizationHeader = req.headers.authorization;
+                token = authorizationHeader.split(" ")[1];
+                decoded = jsonwebtoken_1["default"].verify(token, process.env.TOKEN_SECRET);
+                next();
+                try {
                 }
+                catch (error) { }
+                return [2 /*return*/];
             });
         });
     };
-    TeacherHandler.prototype.create = function (req, res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var data, result;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        data = req.body;
-                        return [4 /*yield*/, teacherMethods.create(data)];
-                    case 1:
-                        result = _a.sent();
-                        res.status(201);
-                        res.json(result);
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return TeacherHandler;
+    return VerifyToken;
 }());
-exports.TeacherHandler = TeacherHandler;
+exports.VerifyToken = VerifyToken;

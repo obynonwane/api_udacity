@@ -1,6 +1,7 @@
 import client from "../database";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 export type User = {
@@ -43,6 +44,7 @@ export class UserModel {
 
   async signin(details: SigninType) {
     try {
+      console.log(process.env.TOKEN_SECRET);
       // return details;
       const { email, password } = details;
 
@@ -54,7 +56,13 @@ export class UserModel {
 
       conn.release();
 
-      return result.rows[0];
+      const secret: any = process.env.TOKEN_SECRET;
+      const token = jwt.sign({ user: result }, secret);
+      const user = result.rows[0].email;
+      return {
+        user: user,
+        token: token,
+      };
     } catch (error) {}
   }
 }

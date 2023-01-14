@@ -4,6 +4,7 @@ export type Teacher = {
   firstname: string;
   lastname: string;
 };
+
 export class TeacherModel {
   async index() {
     try {
